@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda – Vue semaine</title>
+  <link rel="stylesheet" type="text/css" href="styles.css"/>
+</head>
+<body>
+
+<!-- ── Header ───────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-left">
+    <button id="btn-prev"  onclick="prevWeek()" title="Semaine précédente">◀</button>
+    <h2 id="week-label">…</h2>
+    <button id="btn-next"  onclick="nextWeek()" title="Semaine suivante">▶</button>
+    <button id="btn-today" onclick="goToday()">Aujourd'hui</button>
+    <span class="header-sep"></span>
+    <button id="btn-slot-medium" onclick="jumpSlot('medium')" title="Prochain créneau 2h–2h29">🟡 2h – 2h29</button>
+    <button id="btn-slot-long"   onclick="jumpSlot('long')"   title="Prochain créneau 2h30+">🟢 2h30 +</button>
+    <button onclick="buildSlotQueue()" title="Recalculer les créneaux">🔄</button>
+  </div>
+  <div class="header-right">
+    <button onclick="toggleSettings()">⚙ Paramètres</button>
+    <button id="btn-auth"    onclick="handleAuth()"    disabled>🔐 Connexion</button>
+    <button id="btn-signout" onclick="handleSignout()" style="display:none">Déconnexion</button>
+  </div>
+</header>
+
+<!-- ── Settings panel ───────────────────────────────────────────────────── -->
+<div id="settings-panel" style="display:none">
+  <h3>⚙ Paramètres d'affichage</h3>
+  <div class="settings-grid">
+
+    <div class="sg">
+      <h4>Couleurs créneaux libres</h4>
+      <label>
+        <input type="color" id="col-free-short"  value="#A5D6A7"
+               oninput="updateColor('free_short', this.value)">
+        Libre &lt; 2h
+      </label>
+      <label>
+        <input type="color" id="col-free-medium" value="#4CAF50"
+               oninput="updateColor('free_medium', this.value)">
+        Libre 2h00 – 2h29
+      </label>
+      <label>
+        <input type="color" id="col-free-long"   value="#1B5E20"
+               oninput="updateColor('free_long', this.value)">
+        Libre 2h30 et +
+      </label>
+      <label>
+        <input type="color" id="col-busy"        value="#1a73e8"
+               oninput="updateColor('busy', this.value)">
+        Événements (défaut)
+      </label>
+      <label>
+        <input type="color" id="col-extended"    value="#F0F0F0"
+               oninput="updateColor('extended', this.value)">
+        Heures étendues
+      </label>
+    </div>
+
+    <div class="sg">
+      <h4>Couleur par mot-clé d'événement</h4>
+      <div id="keyword-list"></div>
+      <div class="add-kw">
+        <input type="text"  id="new-kw"       placeholder="ex : MEG, réunion…">
+        <input type="color" id="new-kw-color" value="#FF7043">
+        <button onclick="addKw()">+ Ajouter</button>
+      </div>
+    </div>
+
+    <div class="sg">
+      <h4>Réinitialisation</h4>
+      <button onclick="resetConfig()" style="
+        padding:.3rem .8rem;background:#EA4335;color:white;
+        border:none;border-radius:5px;cursor:pointer;font-size:.82rem;">
+        🗑 Remettre les défauts
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Status ───────────────────────────────────────────────────────────── -->
+<div id="status">En attente d'authentification…</div>
+
+<!-- ── Calendar ─────────────────────────────────────────────────────────── -->
+<div id="calendar-container">
+  <div id="calendar-grid"></div>
+</div>
+
+<!-- ── Modal : créer événement ──────────────────────────────────────────── -->
+<div id="modal-create" class="modal">
+  <h3>📅 Nouvel événement</h3>
+  <label>Titre
+    <input type="text" id="ev-title" placeholder="Nom de l'événement">
+  </label>
+  <label>Début
+    <input type="datetime-local" id="ev-start">
+  </label>
+  <label>Fin
+    <input type="datetime-local" id="ev-end">
+  </label>
+  <div class="modal-btns">
+    <button class="btn-cancel" onclick="closeModal('modal-create')">Annuler</button>
+    <button onclick="createEventFromModal()">✅ Créer</button>
+  </div>
+</div>
+
+<!-- ── Modal : détail événement ─────────────────────────────────────────── -->
+<div id="modal-event" class="modal">
+  <div class="modal-ev-header">
+    <div id="modal-ev-color"></div>
+    <h3 id="modal-ev-title"></h3>
+  </div>
+  <p id="modal-ev-time"></p>
+  <div class="modal-btns">
+    <button class="btn-cancel" onclick="closeModal('modal-event')">Fermer</button>
+    <button class="btn-danger" onclick="deleteEventFromModal()">🗑 Supprimer</button>
+  </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
+<!-- ── Scripts ───────────────────────────────────────────────────────────── -->
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+<script async defer src="https://apis.google.com/js/api.js"      onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+</body>
+</html>
