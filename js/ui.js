@@ -55,11 +55,6 @@ for (var h = CONFIG.DISPLAY_START_H; h <= CONFIG.DISPLAY_END_H; h++) {
   gutterHTML += '<div class="time-label" style="top:' + timeToY(h) + 'px">' + pad(h) + ':00</div>';
 }
 gutterHTML += '</div>';
-function getFreeColor(durMin) {
-  if (durMin >= 150) return CONFIG.COLORS.free_long;    // >= 2h30
-  if (durMin >= 120) return CONFIG.COLORS.free_medium;  // 2h00 - 2h29
-  return CONFIG.COLORS.free_short;                      // < 2h
-}
 
   // Day columns
   var daysHTML = '';
